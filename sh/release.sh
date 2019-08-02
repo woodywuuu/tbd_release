@@ -6,10 +6,11 @@ if ! git status|grep "nothing to commit";then
     echo "master分支存在未提交变更，请提交后重试"
     exit 1
 fi
-git pull
-
-# CHANGELOG=Changelog.md
-DAY_NOW=`date +%F`
+LOGS=$(git pull|grep Already)
+if [ "${LOGS}" ];then
+    echo "当前未有变更内容，无法发版，请检查代码是否未合并。退出..."
+    exit 1
+fi
 VER_NOW=`git for-each-ref --sort='*authordate' --format='%(tag)' refs/tags|tail -n 1`
 DELIM='@-@' #日志分隔符
 if [[ -z "${VER_NOW}" ]];then
